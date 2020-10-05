@@ -43,4 +43,27 @@ class Order < ApplicationRecord
     end
     update_attribute(:total, sum)
   end
+
+   #Nuevos métodos  
+  def total_cents
+    self.total * 100 
+  end 
+
+  def create_payment(pm_code, response_token)
+
+    Payment.create(
+      order_id: self.id,
+      payment_method_id: PaymentMethod.find_by(code: pm_code).id,
+      state: "processing",
+      total: self.total,
+      token: response_token
+    )
+  end
+
+  def complete!
+    #order.state = "completed"
+    #order.save!
+    update_attributes({state: "completed"})
+  end
+
 end
